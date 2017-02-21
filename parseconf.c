@@ -226,9 +226,9 @@ static int parse_tokens(void* user, const parseconf_syntax_t* syntax, const pars
                 error_callback(
                     user,
                     *type == PARSECONF_TOKEN_STRING ? PARSECONF_ERROR_EXPECT_STRING
-                        : *type == PARSECONF_TOKEN_NUMBER ? PARSECONF_ERROR_EXPECT_STRING
-                            : *type == PARSECONF_TOKEN_QSTRING ? PARSECONF_ERROR_EXPECT_STRING
-                                : *type == PARSECONF_TOKEN_FLOAT ? PARSECONF_ERROR_EXPECT_STRING
+                        : *type == PARSECONF_TOKEN_NUMBER ? PARSECONF_ERROR_EXPECT_NUMBER
+                            : *type == PARSECONF_TOKEN_QSTRING ? PARSECONF_ERROR_EXPECT_QSTRING
+                                : *type == PARSECONF_TOKEN_FLOAT ? PARSECONF_ERROR_EXPECT_FLOAT
                                     : PARSECONF_ERROR_EXPECT_ANY,
                     line, i, tokens, 0
                 );
