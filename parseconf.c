@@ -125,7 +125,7 @@ static int parse_token(const char** conf, size_t* length, parseconf_token_t* tok
 static int parse_tokens(void* user, const parseconf_syntax_t* syntax, const parseconf_token_t* tokens, size_t token_size, size_t line, parseconf_error_callback_t error_callback) {
     const parseconf_syntax_t* syntaxp;
     const parseconf_token_type_t* type;
-    size_t i, n = 0;
+    size_t i;
     const char* errstr = "Syntax error or invalid arguments";
 
     if (!syntax || !tokens || !token_size) {
@@ -490,7 +490,6 @@ int parseconf_file(void* user, const char* file, const parseconf_syntax_t* synta
     }
     if (ret2 < 0) {
         long pos;
-        char errbuf[512];
 
         pos = ftell(fp);
         if (fseek(fp, 0, SEEK_END)) {
@@ -512,7 +511,7 @@ int parseconf_text(void* user, const char* text, const size_t length, const pars
     const char* buf;
     size_t s, i, line = 0;
     parseconf_token_t tokens[PARSECONF_MAX_TOKENS];
-    int ret, ret2;
+    int ret;
 
     if (!text) {
         return PARSECONF_EINVAL;
@@ -590,7 +589,7 @@ int parseconf_text(void* user, const char* text, const size_t length, const pars
  * Error strings
  */
 
-const char* parseconf_strerr(int errnum) {
+const char* parseconf_strerror(int errnum) {
     switch (errnum) {
         case PARSECONF_ERROR:
             return PARSECONF_ERROR_STR;

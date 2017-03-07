@@ -147,7 +147,7 @@ int parseconf_longdouble(const parseconf_token_t* token, long double* value, con
 
 int parseconf_file(void* user, const char* file, const parseconf_syntax_t* syntax, parseconf_error_callback_t error_callback);
 int parseconf_text(void* user, const char* text, const size_t length, const parseconf_syntax_t* syntax, parseconf_error_callback_t error_callback);
-const char* parseconf_strerr(int errnum);
+const char* parseconf_strerror(int errnum);
 
 #ifdef __cplusplus
 }
