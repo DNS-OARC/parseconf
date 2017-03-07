@@ -1,5 +1,6 @@
-# parseconf
-Conf parser helper library
+# Conf parser helper library
+
+[![Build Status](https://travis-ci.org/DNS-OARC/parseconf.svg?branch=develop)](https://travis-ci.org/DNS-OARC/parseconf) [![Coverity Scan Build Status](https://scan.coverity.com/projects/11848/badge.svg)](https://scan.coverity.com/projects/dns-oarc-parseconf)
 
 ## Author(s)
 
