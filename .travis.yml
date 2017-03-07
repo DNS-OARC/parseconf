@@ -1,11 +1,16 @@
 language: c
 compiler:
-  - clang
   - gcc
-script:
-  - cd example
-  - sh autogen.sh
-  - ./configure
-  - make
-  - ./example -h
-  - make test
+env:
+  global:
+   - secure: "eqwVjUdnq5SSBoEjYQ6rBda6EQQgT5wVyVvKigYcm3/wKrB9cnpF8LYNGTabcnbmH+TGbklPJ8Gc+y/oSye+TzAEsGFMq4ByWp8y27tJiDS3rFSb0gQHn/5mFbOvu/VHnVrjjxVVHax1jvK48gkGBvzo7iWV8Dq/ixChFc2cDnS1pfSRhfU0gBHi9Xz7ZHs3NvHIOYqMD6OL7sEK5W4EkU3pRg/T5eqhMIccMV/63yujfkErnV9Ibz9pGvunuYg9UPIsw89pOxwuQ1dvXJsvI8rBG8K6xq0wqxLYWSKJwVwKSlA4RvQuwQk64yprdPDse62E0XBi26fjf3ZUhtOLwHsjxIeAExjwu0O/gprPizr6Z41zjpfIx8iEuQFwc6gbMsXapsrd5f4sd4Ng9n+KWX7YUJMHmwXigp2CX0uwH07XJ525m60E8lVAA1sjjjGWlkSYAiXvhoLuOf4pKnKQhBpZk7MSLWElPpnR2Lmgyn3AajUv9y0DylifzWvhZS45As7B5MKJRPXHDKsWTcEd1qDQdGf3tJL1S75/BUrvkbZ+4KshW67Jr/dcvE/voQU5jraP1uo3ktgy/gGpZxHmryS+aTA8oy/P3ZHDL4mBUhEmCAo5IGBCaC66RPB8zjmKtIUkW4427+WUNUzWnwaw/o5apSaJIwgO2bv4ECIH3es="
+addons:
+  coverity_scan:
+    project:
+      name: "DNS-OARC/parseconf"
+      description: "Build submitted via Travis CI"
+    notification_email: lundstrom.jerry@gmail.com
+    build_command_prepend: "(cd example && ./autogen.sh && ./configure && make clean)"
+    build_command: "./cov.sh"
+    branch_pattern: coverity_scan
+script: true
