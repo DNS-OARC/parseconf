@@ -26,6 +26,9 @@
 
 #include <stdlib.h>
 #include <string.h>
+#ifdef __FreeBSD__
+#define _WITH_GETLINE
+#endif
 #include <stdio.h>
 
 /*
