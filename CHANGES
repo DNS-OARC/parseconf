@@ -1,0 +1,14 @@
+2017-03-28 Jerry Lundström
+
+    Release 1.0.0
+
+    First release of parseconf.
+
+    3433c0b Get `getline()` on FreeBSD
+    978380f Add about and usage
+    7964df1 Add Travis-CI and Coverity badges
+    32cd118 Add example program, add Travis-CI
+    0a7a61d Remove unused, rename string error func
+    56fce3e Return correct expect error
+    6b20208 First implementation
+    4f08f18 Initial commit
