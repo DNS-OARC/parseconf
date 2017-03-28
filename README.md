@@ -2,6 +2,28 @@
 
 [![Build Status](https://travis-ci.org/DNS-OARC/parseconf.svg?branch=develop)](https://travis-ci.org/DNS-OARC/parseconf) [![Coverity Scan Build Status](https://scan.coverity.com/projects/11848/badge.svg)](https://scan.coverity.com/projects/dns-oarc-parseconf)
 
+## About
+
+This is a helper library for parsing confiuration files.
+
+## Usage
+
+Please see `example.c` in the example directory.
+
+### git submodule
+
+```shell
+git submodule init
+git submodule add https://github.com/DNS-OARC/parseconf.git src/parseconf
+```
+
+### Makefile.am
+
+```m4
+program_SOURCES += parseconf/parseconf.c
+dist_program_SOURCES += parseconf/parseconf.h
+```
+
 ## Author(s)
 
 Jerry Lundström <jerry@dns-oarc.net>
