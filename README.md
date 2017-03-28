@@ -4,7 +4,7 @@
 
 ## About
 
-This is a helper library for parsing confiuration files.
+This is a helper library for parsing configuration files.
 
 ## Usage
 
