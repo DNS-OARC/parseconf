@@ -1,6 +1,22 @@
-example number: 1234567890
-example number: 12345678901234567890
-example string: string
-example quoted string: quoted string string string
-example number: 1.234568e-01
-example number: 1.234568e+08
+0 string: example
+1 number: 1234567890
+0 string: example
+1 number: 12345678901234567890
+0 string: example
+1 string: string
+2 string: string
+3 string: string
+0 string: example
+1 quoted string: quoted string string string
+0 string: example
+1 number: 1.234568e-01
+0 string: example
+1 number: 1.234568e+08
+0 string: example
+1 string: string
+2 string: string
+0 string: example
+1 string: tab
+2 string: tab
+Conf error at line 1, invalid syntax
+parseconf_text(example "quote error"";): Generic error
