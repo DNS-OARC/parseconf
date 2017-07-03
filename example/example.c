@@ -46,6 +46,7 @@ static parseconf_token_type_t example_tokens[] = {
 static int parse_example(void* user, const parseconf_token_t* tokens, const char** errstr) {
     unsigned long long int num = 0;
     long double dbl = 0.;
+    int i;
 
     if (!tokens) {
         return 1;
@@ -54,30 +55,32 @@ static int parse_example(void* user, const parseconf_token_t* tokens, const char
         return 1;
     }
 
-    switch (tokens[1].type) {
-        case PARSECONF_TOKEN_NUMBER:
-            if (parseconf_ulonglongint(&tokens[1], &num, errstr))
+    for (i = 0; tokens[i].type != PARSECONF_TOKEN_END; i++) {
+        switch (tokens[i].type) {
+            case PARSECONF_TOKEN_NUMBER:
+                if (parseconf_ulonglongint(&tokens[i], &num, errstr))
+                    return 1;
+                printf("%d number: %llu\n", i, num);
+                break;
+
+            case PARSECONF_TOKEN_STRING:
+                printf("%d string: %.*s\n", i, (int)tokens[i].length, tokens[i].token);
+                break;
+
+            case PARSECONF_TOKEN_QSTRING:
+                printf("%d quoted string: %.*s\n", i, (int)tokens[i].length, tokens[i].token);
+                break;
+
+            case PARSECONF_TOKEN_FLOAT:
+                if (parseconf_longdouble(&tokens[i], &dbl, errstr))
+                    return 1;
+                printf("%d number: %Le\n", i, dbl);
+                break;
+
+            default:
+                *errstr = "Unknown token type";
                 return 1;
-            printf("example number: %llu\n", num);
-            break;
-
-        case PARSECONF_TOKEN_STRING:
-            printf("example string: %.*s\n", (int)tokens[1].length, tokens[1].token);
-            break;
-
-        case PARSECONF_TOKEN_QSTRING:
-            printf("example quoted string: %.*s\n", (int)tokens[1].length, tokens[1].token);
-            break;
-
-        case PARSECONF_TOKEN_FLOAT:
-            if (parseconf_longdouble(&tokens[1], &dbl, errstr))
-                return 1;
-            printf("example number: %Le\n", dbl);
-            break;
-
-        default:
-            *errstr = "Unknown token type";
-            return 1;
+        }
     }
 
     return 0;

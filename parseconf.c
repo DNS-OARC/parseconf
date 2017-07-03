@@ -88,16 +88,19 @@ static int parse_token(const char** conf, size_t* length, parseconf_token_t* tok
     for (; **conf && length; (*conf)++, (*length)--) {
         if (quoted && **conf == '"') {
             end = 1;
+            quoted = 0;
             continue;
         }
         else if ((!quoted || end) && (**conf == ' ' || **conf == '\t' || **conf == ';')) {
+            while (length && (**conf == ' ' || **conf == '\t')) {
+                (*conf)++;
+                (*length)--;
+            }
             if (**conf == ';') {
                 (*conf)++;
                 (*length)--;
                 return PARSECONF_LAST;
             }
-            (*conf)++;
-            (*length)--;
             return PARSECONF_OK;
         }
         else if (end || **conf == '\n' || **conf == '\r' || !**conf) {

@@ -22,6 +22,10 @@
     "example string string string;" \
     'example "quoted string string string";' \
     "example 0.1234567890;" \
-    "example 123456789.1234567890;" >test1.out
+    "example 123456789.1234567890;" \
+    "example    string    string    ;" \
+    "example	tab	tab 	;" >test1.out
+
+! ../example -t 'example "quote error"";' 2>>test1.out
 
 diff test1.out "$srcdir/test1.gold"
