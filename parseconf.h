@@ -30,6 +30,8 @@
 #define parseconf_assert(x)
 #endif
 
+/* clang-format off */
+
 #define PARSECONF_VERSION_STR   "1.0.0"
 #define PARSECONF_VERSION_MAJOR 1
 #define PARSECONF_VERSION_MINOR 0
@@ -51,14 +53,16 @@
 
 #define PARSECONF_MAX_TOKENS    64
 
+/* clang-format on */
+
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 const char* parseconf_version_str(void);
-int parseconf_version_major(void);
-int parseconf_version_minor(void);
-int parseconf_version_patch(void);
+int         parseconf_version_major(void);
+int         parseconf_version_minor(void);
+int         parseconf_version_patch(void);
 
 typedef enum parseconf_token_type parseconf_token_type_t;
 #ifdef PARSECONF_USE_SHORT_TOKENS
@@ -75,17 +79,17 @@ enum parseconf_token_type {
     FLOATS,
     NESTED
 };
-#define PARSECONF_TOKEN_END         END
-#define PARSECONF_TOKEN_STRING      STRING
-#define PARSECONF_TOKEN_QSTRING     QSTRING
-#define PARSECONF_TOKEN_NUMBER      NUMBER
-#define PARSECONF_TOKEN_STRINGS     STRINGS
-#define PARSECONF_TOKEN_QSTRINGS    QSTRINGS
-#define PARSECONF_TOKEN_NUMBERS     NUMBERS
-#define PARSECONF_TOKEN_ANY         ANY
-#define PARSECONF_TOKEN_FLOAT       FLOAT
-#define PARSECONF_TOKEN_FLOATS      FLOATS
-#define PARSECONF_TOKEN_NESTED      NESTED
+#define PARSECONF_TOKEN_END END
+#define PARSECONF_TOKEN_STRING STRING
+#define PARSECONF_TOKEN_QSTRING QSTRING
+#define PARSECONF_TOKEN_NUMBER NUMBER
+#define PARSECONF_TOKEN_STRINGS STRINGS
+#define PARSECONF_TOKEN_QSTRINGS QSTRINGS
+#define PARSECONF_TOKEN_NUMBERS NUMBERS
+#define PARSECONF_TOKEN_ANY ANY
+#define PARSECONF_TOKEN_FLOAT FLOAT
+#define PARSECONF_TOKEN_FLOATS FLOATS
+#define PARSECONF_TOKEN_NESTED NESTED
 #else
 enum parseconf_token_type {
     PARSECONF_TOKEN_END = 0,
@@ -104,9 +108,9 @@ enum parseconf_token_type {
 
 typedef struct parseconf_token parseconf_token_t;
 struct parseconf_token {
-    parseconf_token_type_t  type;
-    const char*             token;
-    size_t                  length;
+    parseconf_token_type_t type;
+    const char*            token;
+    size_t                 length;
 };
 
 typedef int (*parseconf_token_callback_t)(void* user, const parseconf_token_t* tokens, const char** errstr);
@@ -131,13 +135,16 @@ enum parseconf_error {
 
 typedef void (*parseconf_error_callback_t)(void* user, parseconf_error_t error, size_t line, size_t token, const parseconf_token_t* tokens, const char* errstr);
 
-#define PARSECONF_SYNTAX_END { 0, 0, 0, 0 }
+#define PARSECONF_SYNTAX_END \
+    {                        \
+        0, 0, 0, 0           \
+    }
 typedef struct parseconf_syntax parseconf_syntax_t;
 struct parseconf_syntax {
-    const char*                     token;
-    parseconf_token_callback_t      callback;
-    const parseconf_token_type_t*   syntax;
-    const parseconf_syntax_t*       nested;
+    const char*                   token;
+    parseconf_token_callback_t    callback;
+    const parseconf_token_type_t* syntax;
+    const parseconf_syntax_t*     nested;
 };
 
 int parseconf_ulongint(const parseconf_token_t* token, unsigned long int* value, const char** errstr);

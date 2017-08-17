@@ -27,26 +27,27 @@
 #include <string.h>
 #include <errno.h>
 
-void usage(void) {
+void usage(void)
+{
     printf(
-"usage: example [options] <config...>\n"
-" -f                 the config is a file (default)\n"
-" -t                 the config is text\n"
-"                    multiple config options can be given but each command\n"
-"                    line argument is parse separate\n"
-" -V                 display version and exit\n"
-" -h                 this\n"
-    );
+        "usage: example [options] <config...>\n"
+        " -f                 the config is a file (default)\n"
+        " -t                 the config is text\n"
+        "                    multiple config options can be given but each command\n"
+        "                    line argument is parse separate\n"
+        " -V                 display version and exit\n"
+        " -h                 this\n");
 }
 
 static parseconf_token_type_t example_tokens[] = {
     PARSECONF_TOKEN_ANY, PARSECONF_TOKEN_END
 };
 
-static int parse_example(void* user, const parseconf_token_t* tokens, const char** errstr) {
+static int parse_example(void* user, const parseconf_token_t* tokens, const char** errstr)
+{
     unsigned long long int num = 0;
-    long double dbl = 0.;
-    int i;
+    long double            dbl = 0.;
+    int                    i;
 
     if (!tokens) {
         return 1;
@@ -57,29 +58,29 @@ static int parse_example(void* user, const parseconf_token_t* tokens, const char
 
     for (i = 0; tokens[i].type != PARSECONF_TOKEN_END; i++) {
         switch (tokens[i].type) {
-            case PARSECONF_TOKEN_NUMBER:
-                if (parseconf_ulonglongint(&tokens[i], &num, errstr))
-                    return 1;
-                printf("%d number: %llu\n", i, num);
-                break;
-
-            case PARSECONF_TOKEN_STRING:
-                printf("%d string: %.*s\n", i, (int)tokens[i].length, tokens[i].token);
-                break;
-
-            case PARSECONF_TOKEN_QSTRING:
-                printf("%d quoted string: %.*s\n", i, (int)tokens[i].length, tokens[i].token);
-                break;
-
-            case PARSECONF_TOKEN_FLOAT:
-                if (parseconf_longdouble(&tokens[i], &dbl, errstr))
-                    return 1;
-                printf("%d number: %Le\n", i, dbl);
-                break;
-
-            default:
-                *errstr = "Unknown token type";
+        case PARSECONF_TOKEN_NUMBER:
+            if (parseconf_ulonglongint(&tokens[i], &num, errstr))
                 return 1;
+            printf("%d number: %llu\n", i, num);
+            break;
+
+        case PARSECONF_TOKEN_STRING:
+            printf("%d string: %.*s\n", i, (int)tokens[i].length, tokens[i].token);
+            break;
+
+        case PARSECONF_TOKEN_QSTRING:
+            printf("%d quoted string: %.*s\n", i, (int)tokens[i].length, tokens[i].token);
+            break;
+
+        case PARSECONF_TOKEN_FLOAT:
+            if (parseconf_longdouble(&tokens[i], &dbl, errstr))
+                return 1;
+            printf("%d number: %Le\n", i, dbl);
+            break;
+
+        default:
+            *errstr = "Unknown token type";
+            return 1;
         }
     }
 
@@ -91,67 +92,69 @@ static parseconf_syntax_t syntax[] = {
     PARSECONF_SYNTAX_END
 };
 
-static void error_callback(void* user, parseconf_error_t error, size_t line, size_t token, const parseconf_token_t* tokens, const char* errstr) {
+static void error_callback(void* user, parseconf_error_t error, size_t line, size_t token, const parseconf_token_t* tokens, const char* errstr)
+{
     switch (error) {
-        case PARSECONF_ERROR_INTERNAL:
-            fprintf(stderr, "Internal conf error at line %lu\n", line);
-            break;
+    case PARSECONF_ERROR_INTERNAL:
+        fprintf(stderr, "Internal conf error at line %lu\n", line);
+        break;
 
-        case PARSECONF_ERROR_EXPECT_STRING:
-            fprintf(stderr, "Conf error at line %lu for argument %lu, expected a string\n", line, token);
-            break;
+    case PARSECONF_ERROR_EXPECT_STRING:
+        fprintf(stderr, "Conf error at line %lu for argument %lu, expected a string\n", line, token);
+        break;
 
-        case PARSECONF_ERROR_EXPECT_NUMBER:
-            fprintf(stderr, "Conf error at line %lu for argument %lu, expected a number\n", line, token);
-            break;
+    case PARSECONF_ERROR_EXPECT_NUMBER:
+        fprintf(stderr, "Conf error at line %lu for argument %lu, expected a number\n", line, token);
+        break;
 
-        case PARSECONF_ERROR_EXPECT_QSTRING:
-            fprintf(stderr, "Conf error at line %lu for argument %lu, expected a quoted string\n", line, token);
-            break;
+    case PARSECONF_ERROR_EXPECT_QSTRING:
+        fprintf(stderr, "Conf error at line %lu for argument %lu, expected a quoted string\n", line, token);
+        break;
 
-        case PARSECONF_ERROR_EXPECT_FLOAT:
-            fprintf(stderr, "Conf error at line %lu for argument %lu, expected a float\n", line, token);
-            break;
+    case PARSECONF_ERROR_EXPECT_FLOAT:
+        fprintf(stderr, "Conf error at line %lu for argument %lu, expected a float\n", line, token);
+        break;
 
-        case PARSECONF_ERROR_EXPECT_ANY:
-            fprintf(stderr, "Conf error at line %lu for argument %lu, expected any type\n", line, token);
-            break;
+    case PARSECONF_ERROR_EXPECT_ANY:
+        fprintf(stderr, "Conf error at line %lu for argument %lu, expected any type\n", line, token);
+        break;
 
-        case PARSECONF_ERROR_UNKNOWN:
-            fprintf(stderr, "Conf error at line %lu for argument %lu, unknown configuration\n", line, token);
-            break;
+    case PARSECONF_ERROR_UNKNOWN:
+        fprintf(stderr, "Conf error at line %lu for argument %lu, unknown configuration\n", line, token);
+        break;
 
-        case PARSECONF_ERROR_NO_NESTED:
-            fprintf(stderr, "Internal conf error at line %lu for argument %lu, no nested conf\n", line, token);
-            break;
+    case PARSECONF_ERROR_NO_NESTED:
+        fprintf(stderr, "Internal conf error at line %lu for argument %lu, no nested conf\n", line, token);
+        break;
 
-        case PARSECONF_ERROR_NO_CALLBACK:
-            fprintf(stderr, "Internal conf error at line %lu for argument %lu, no callback\n", line, token);
-            break;
+    case PARSECONF_ERROR_NO_CALLBACK:
+        fprintf(stderr, "Internal conf error at line %lu for argument %lu, no callback\n", line, token);
+        break;
 
-        case PARSECONF_ERROR_CALLBACK:
-            fprintf(stderr, "Conf error at line %lu, %s\n", line, errstr);
-            break;
+    case PARSECONF_ERROR_CALLBACK:
+        fprintf(stderr, "Conf error at line %lu, %s\n", line, errstr);
+        break;
 
-        case PARSECONF_ERROR_FILE_ERRNO:
-            fprintf(stderr, "Internal conf error at line %lu for argument %lu, errno: %s\n", line, token, strerror(errno));
-            break;
+    case PARSECONF_ERROR_FILE_ERRNO:
+        fprintf(stderr, "Internal conf error at line %lu for argument %lu, errno: %s\n", line, token, strerror(errno));
+        break;
 
-        case PARSECONF_ERROR_TOO_MANY_ARGUMENTS:
-            fprintf(stderr, "Conf error at line %lu, too many arguments\n", line);
-            break;
+    case PARSECONF_ERROR_TOO_MANY_ARGUMENTS:
+        fprintf(stderr, "Conf error at line %lu, too many arguments\n", line);
+        break;
 
-        case PARSECONF_ERROR_INVALID_SYNTAX:
-            fprintf(stderr, "Conf error at line %lu, invalid syntax\n", line);
-            break;
+    case PARSECONF_ERROR_INVALID_SYNTAX:
+        fprintf(stderr, "Conf error at line %lu, invalid syntax\n", line);
+        break;
 
-        default:
-            fprintf(stderr, "Unknown conf error %d at %lu\n", error, line);
-            break;
+    default:
+        fprintf(stderr, "Unknown conf error %d at %lu\n", error, line);
+        break;
     }
 }
 
-int main(int argc, char** argv) {
+int main(int argc, char** argv)
+{
     int opt, file = 1, err;
 
     while ((opt = getopt(argc, argv, "fthV")) != -1) {
