@@ -36,19 +36,23 @@
  */
 
 static const char* _version = PARSECONF_VERSION_STR;
-inline const char* parseconf_version_str(void) {
+inline const char* parseconf_version_str(void)
+{
     return _version;
 }
 
-inline int parseconf_version_major(void) {
+inline int parseconf_version_major(void)
+{
     return PARSECONF_VERSION_MAJOR;
 }
 
-inline int parseconf_version_minor(void) {
+inline int parseconf_version_minor(void)
+{
     return PARSECONF_VERSION_MINOR;
 }
 
-inline int parseconf_version_patch(void) {
+inline int parseconf_version_patch(void)
+{
     return PARSECONF_VERSION_PATCH;
 }
 
@@ -56,7 +60,8 @@ inline int parseconf_version_patch(void) {
  * Parsing functions
  */
 
-static int parse_token(const char** conf, size_t* length, parseconf_token_t* token) {
+static int parse_token(const char** conf, size_t* length, parseconf_token_t* token)
+{
     int quoted = 0, end = 0;
 
     if (!conf || !*conf || !length || !token) {
@@ -77,21 +82,19 @@ static int parse_token(const char** conf, size_t* length, parseconf_token_t* tok
         (*conf)++;
         (*length)--;
         token->type = PARSECONF_TOKEN_QSTRING;
-    }
-    else {
+    } else {
         token->type = PARSECONF_TOKEN_NUMBER;
     }
 
-    token->token = *conf;
+    token->token  = *conf;
     token->length = 0;
 
     for (; **conf && length; (*conf)++, (*length)--) {
         if (quoted && **conf == '"') {
-            end = 1;
+            end    = 1;
             quoted = 0;
             continue;
-        }
-        else if ((!quoted || end) && (**conf == ' ' || **conf == '\t' || **conf == ';')) {
+        } else if ((!quoted || end) && (**conf == ' ' || **conf == '\t' || **conf == ';')) {
             while (length && (**conf == ' ' || **conf == '\t')) {
                 (*conf)++;
                 (*length)--;
@@ -102,23 +105,21 @@ static int parse_token(const char** conf, size_t* length, parseconf_token_t* tok
                 return PARSECONF_LAST;
             }
             return PARSECONF_OK;
-        }
-        else if (end || **conf == '\n' || **conf == '\r' || !**conf) {
+        } else if (end || **conf == '\n' || **conf == '\r' || !**conf) {
             return PARSECONF_ERROR;
         }
 
         if (**conf == '.' && token->type == PARSECONF_TOKEN_NUMBER) {
             token->type = PARSECONF_TOKEN_FLOAT;
-        }
-        else if (**conf < '0' || **conf > '9') {
+        } else if (**conf < '0' || **conf > '9') {
             switch (token->type) {
-                case PARSECONF_TOKEN_NUMBER:
-                    token->type = PARSECONF_TOKEN_STRING;
-                    break;
-                case PARSECONF_TOKEN_FLOAT:
-                    return PARSECONF_ERROR;
-                default:
-                    break;
+            case PARSECONF_TOKEN_NUMBER:
+                token->type = PARSECONF_TOKEN_STRING;
+                break;
+            case PARSECONF_TOKEN_FLOAT:
+                return PARSECONF_ERROR;
+            default:
+                break;
             }
         }
 
@@ -128,11 +129,12 @@ static int parse_token(const char** conf, size_t* length, parseconf_token_t* tok
     return PARSECONF_ERROR;
 }
 
-static int parse_tokens(void* user, const parseconf_syntax_t* syntax, const parseconf_token_t* tokens, size_t token_size, size_t line, parseconf_error_callback_t error_callback) {
-    const parseconf_syntax_t* syntaxp;
+static int parse_tokens(void* user, const parseconf_syntax_t* syntax, const parseconf_token_t* tokens, size_t token_size, size_t line, parseconf_error_callback_t error_callback)
+{
+    const parseconf_syntax_t*     syntaxp;
     const parseconf_token_type_t* type;
-    size_t i;
-    const char* errstr = "Syntax error or invalid arguments";
+    size_t                        i;
+    const char*                   errstr = "Syntax error or invalid arguments";
 
     if (!syntax || !tokens || !token_size) {
         if (error_callback)
@@ -229,15 +231,24 @@ static int parse_tokens(void* user, const parseconf_syntax_t* syntax, const pars
 
         if (tokens[i].type != *type) {
             if (error_callback) {
-                error_callback(
-                    user,
-                    *type == PARSECONF_TOKEN_STRING ? PARSECONF_ERROR_EXPECT_STRING
-                        : *type == PARSECONF_TOKEN_NUMBER ? PARSECONF_ERROR_EXPECT_NUMBER
-                            : *type == PARSECONF_TOKEN_QSTRING ? PARSECONF_ERROR_EXPECT_QSTRING
-                                : *type == PARSECONF_TOKEN_FLOAT ? PARSECONF_ERROR_EXPECT_FLOAT
-                                    : PARSECONF_ERROR_EXPECT_ANY,
-                    line, i, tokens, 0
-                );
+                parseconf_error_t err;
+                switch (*type) {
+                case PARSECONF_TOKEN_STRING:
+                    err = PARSECONF_ERROR_EXPECT_STRING;
+                    break;
+                case PARSECONF_TOKEN_NUMBER:
+                    err = PARSECONF_ERROR_EXPECT_NUMBER;
+                    break;
+                case PARSECONF_TOKEN_QSTRING:
+                    err = PARSECONF_ERROR_EXPECT_QSTRING;
+                    break;
+                case PARSECONF_TOKEN_FLOAT:
+                    err = PARSECONF_ERROR_EXPECT_FLOAT;
+                    break;
+                default:
+                    err = PARSECONF_ERROR_EXPECT_ANY;
+                }
+                error_callback(user, err, line, i, tokens, 0);
             }
             return PARSECONF_ERROR;
         }
@@ -263,8 +274,9 @@ static int parse_tokens(void* user, const parseconf_syntax_t* syntax, const pars
  * Value helpers
  */
 
-int parseconf_ulongint(const parseconf_token_t* token, unsigned long int* value, const char** errstr) {
-    char buf[32];
+int parseconf_ulongint(const parseconf_token_t* token, unsigned long int* value, const char** errstr)
+{
+    char  buf[32];
     char* endptr = 0;
 
     if (!token) {
@@ -274,7 +286,7 @@ int parseconf_ulongint(const parseconf_token_t* token, unsigned long int* value,
         return 1;
     }
 
-    if (token->length > (sizeof(buf)-1)) {
+    if (token->length > (sizeof(buf) - 1)) {
         if (errstr)
             *errstr = "Too large value";
         return 1;
@@ -298,8 +310,9 @@ int parseconf_ulongint(const parseconf_token_t* token, unsigned long int* value,
     return 0;
 }
 
-int parseconf_ulonglongint(const parseconf_token_t* token, unsigned long long int* value, const char** errstr) {
-    char buf[64];
+int parseconf_ulonglongint(const parseconf_token_t* token, unsigned long long int* value, const char** errstr)
+{
+    char  buf[64];
     char* endptr = 0;
 
     if (!token) {
@@ -309,7 +322,7 @@ int parseconf_ulonglongint(const parseconf_token_t* token, unsigned long long in
         return 1;
     }
 
-    if (token->length > (sizeof(buf)-1)) {
+    if (token->length > (sizeof(buf) - 1)) {
         if (errstr)
             *errstr = "Too large value";
         return 1;
@@ -333,8 +346,9 @@ int parseconf_ulonglongint(const parseconf_token_t* token, unsigned long long in
     return 0;
 }
 
-int parseconf_double(const parseconf_token_t* token, double* value, const char** errstr) {
-    char buf[64];
+int parseconf_double(const parseconf_token_t* token, double* value, const char** errstr)
+{
+    char  buf[64];
     char* endptr = 0;
 
     if (!token) {
@@ -344,7 +358,7 @@ int parseconf_double(const parseconf_token_t* token, double* value, const char**
         return 1;
     }
 
-    if (token->length > (sizeof(buf)-1)) {
+    if (token->length > (sizeof(buf) - 1)) {
         if (errstr)
             *errstr = "Too large value";
         return 1;
@@ -368,8 +382,9 @@ int parseconf_double(const parseconf_token_t* token, double* value, const char**
     return 0;
 }
 
-int parseconf_longdouble(const parseconf_token_t* token, long double* value, const char** errstr) {
-    char buf[128];
+int parseconf_longdouble(const parseconf_token_t* token, long double* value, const char** errstr)
+{
+    char  buf[128];
     char* endptr = 0;
 
     if (!token) {
@@ -379,7 +394,7 @@ int parseconf_longdouble(const parseconf_token_t* token, long double* value, con
         return 1;
     }
 
-    if (token->length > (sizeof(buf)-1)) {
+    if (token->length > (sizeof(buf) - 1)) {
         if (errstr)
             *errstr = "Too large value";
         return 1;
@@ -407,14 +422,15 @@ int parseconf_longdouble(const parseconf_token_t* token, long double* value, con
  * Calls
  */
 
-int parseconf_file(void* user, const char* file, const parseconf_syntax_t* syntax, parseconf_error_callback_t error_callback) {
-    FILE* fp;
-    char* buffer = 0;
-    size_t bufsize = 0;
-    const char* buf;
-    size_t s, i, line = 0;
+int parseconf_file(void* user, const char* file, const parseconf_syntax_t* syntax, parseconf_error_callback_t error_callback)
+{
+    FILE*             fp;
+    char*             buffer  = 0;
+    size_t            bufsize = 0;
+    const char*       buf;
+    size_t            s, i, line = 0;
     parseconf_token_t tokens[PARSECONF_MAX_TOKENS];
-    int ret, ret2;
+    int               ret, ret2;
 
     if (!file) {
         return PARSECONF_EINVAL;
@@ -429,8 +445,8 @@ int parseconf_file(void* user, const char* file, const parseconf_syntax_t* synta
         return PARSECONF_ERROR;
     }
     ret2 = getline(&buffer, &bufsize, fp);
-    buf = buffer;
-    s = bufsize;
+    buf  = buffer;
+    s    = bufsize;
     line++;
     while (ret2 > 0) {
         memset(tokens, 0, sizeof(tokens));
@@ -457,18 +473,15 @@ int parseconf_file(void* user, const char* file, const parseconf_syntax_t* synta
              * Line ended with comment, reduce the number of tokens
              */
             i--;
-        }
-        else if (ret == PARSECONF_EMPTY) {
+        } else if (ret == PARSECONF_EMPTY) {
             i = 0;
-        }
-        else if (ret == PARSECONF_OK) {
+        } else if (ret == PARSECONF_OK) {
             if (error_callback)
                 error_callback(user, PARSECONF_ERROR_TOO_MANY_ARGUMENTS, line, 0, tokens, 0);
             free(buffer);
             fclose(fp);
             return PARSECONF_ERROR;
-        }
-        else if (ret != PARSECONF_LAST) {
+        } else if (ret != PARSECONF_LAST) {
             if (error_callback)
                 error_callback(user, PARSECONF_ERROR_INVALID_SYNTAX, line, 0, tokens, 0);
             free(buffer);
@@ -489,8 +502,8 @@ int parseconf_file(void* user, const char* file, const parseconf_syntax_t* synta
 
         if (ret == PARSECONF_COMMENT || !s || !*buf || *buf == '\n' || *buf == '\r') {
             ret2 = getline(&buffer, &bufsize, fp);
-            buf = buffer;
-            s = bufsize;
+            buf  = buffer;
+            s    = bufsize;
             line++;
         }
     }
@@ -501,8 +514,7 @@ int parseconf_file(void* user, const char* file, const parseconf_syntax_t* synta
         if (fseek(fp, 0, SEEK_END)) {
             if (error_callback)
                 error_callback(user, PARSECONF_ERROR_FILE_ERRNO, line, 0, 0, 0);
-        }
-        else if (ftell(fp) < pos) {
+        } else if (ftell(fp) < pos) {
             if (error_callback)
                 error_callback(user, PARSECONF_ERROR_FILE_ERRNO, line, 0, 0, 0);
         }
@@ -513,11 +525,12 @@ int parseconf_file(void* user, const char* file, const parseconf_syntax_t* synta
     return PARSECONF_OK;
 }
 
-int parseconf_text(void* user, const char* text, const size_t length, const parseconf_syntax_t* syntax, parseconf_error_callback_t error_callback) {
-    const char* buf;
-    size_t s, i, line = 0;
+int parseconf_text(void* user, const char* text, const size_t length, const parseconf_syntax_t* syntax, parseconf_error_callback_t error_callback)
+{
+    const char*       buf;
+    size_t            s, i, line = 0;
     parseconf_token_t tokens[PARSECONF_MAX_TOKENS];
-    int ret;
+    int               ret;
 
     if (!text) {
         return PARSECONF_EINVAL;
@@ -528,7 +541,7 @@ int parseconf_text(void* user, const char* text, const size_t length, const pars
 
     memset(tokens, 0, sizeof(tokens));
     buf = text;
-    s = length;
+    s   = length;
     line++;
 
     while (1) {
@@ -561,16 +574,13 @@ int parseconf_text(void* user, const char* text, const size_t length, const pars
                  */
                 return PARSECONF_OK;
             }
-        }
-        else if (ret == PARSECONF_EMPTY) {
+        } else if (ret == PARSECONF_EMPTY) {
             i = 0;
-        }
-        else if (ret == PARSECONF_OK) {
+        } else if (ret == PARSECONF_OK) {
             if (error_callback)
                 error_callback(user, PARSECONF_ERROR_TOO_MANY_ARGUMENTS, line, 0, tokens, 0);
             return PARSECONF_ERROR;
-        }
-        else if (ret != PARSECONF_LAST) {
+        } else if (ret != PARSECONF_LAST) {
             if (error_callback)
                 error_callback(user, PARSECONF_ERROR_INVALID_SYNTAX, line, 0, tokens, 0);
             return PARSECONF_ERROR;
@@ -595,18 +605,19 @@ int parseconf_text(void* user, const char* text, const size_t length, const pars
  * Error strings
  */
 
-const char* parseconf_strerror(int errnum) {
+const char* parseconf_strerror(int errnum)
+{
     switch (errnum) {
-        case PARSECONF_ERROR:
-            return PARSECONF_ERROR_STR;
-        case PARSECONF_EINVAL:
-            return PARSECONF_EINVAL_STR;
-        case PARSECONF_ENOMEM:
-            return PARSECONF_ENOMEM_STR;
-        case PARSECONF_EEXIST:
-            return PARSECONF_EEXIST_STR;
-        default:
-            break;
+    case PARSECONF_ERROR:
+        return PARSECONF_ERROR_STR;
+    case PARSECONF_EINVAL:
+        return PARSECONF_EINVAL_STR;
+    case PARSECONF_ENOMEM:
+        return PARSECONF_ENOMEM_STR;
+    case PARSECONF_EEXIST:
+        return PARSECONF_EEXIST_STR;
+    default:
+        break;
     }
     return "Unknown error";
 }
